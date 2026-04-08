@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80" alt="AURUM banner" width="100%" style="border-radius:12px;" />
+</div>
+
+<br />
+
 # AURUM — Expense Tracker
 
 Most people have no clear picture of where their money goes each month. AURUM solves this by giving you a single place to log, categorise, and visualise every expense — so patterns become obvious at a glance. It is a production-quality full-stack Single Page Application with a luxury black-and-white aesthetic, built for university assignment submission.
