@@ -35,6 +35,7 @@ export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, 
     <div className="dashboard">
       <div className="page-hero">
         <div className="page-hero-content">
+          <p className="hero-aurum-label">AURUM</p>
           <h1 className="page-title">Overview</h1>
           <p className="page-sub">
             {now.toLocaleString('default', { month: 'long', year: 'numeric' })}

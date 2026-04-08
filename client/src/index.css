@@ -245,7 +245,7 @@ body {
    ============================================================ */
 .page-hero {
   position: relative;
-  height: 240px;
+  height: 180px;
   background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80');
   background-size: cover;
   background-position: center 40%;
@@ -270,7 +270,17 @@ body {
 .page-hero-content {
   position: relative;
   z-index: 1;
-  padding: 28px 28px 24px;
+  padding: 20px 28px 20px;
+}
+
+.hero-aurum-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 6px;
 }
 
 /* ============================================================
