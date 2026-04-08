@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80" alt="AURUM banner" width="100%" style="border-radius:12px;" />
+  <img src="preview.png" alt="AURUM Expense Tracker preview" width="100%" />
 </div>
 
 <br />
