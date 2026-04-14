@@ -33,20 +33,20 @@ const MONTH_NAMES = [
 ];
 
 export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, onViewAll }) {
-  const now = new Date(); // current date — used for the "This Month" filter and the hero subtitle
+  const now = new Date(); // current date — used for "This Month" filter and hero subtitle
 
   // Filter to current calendar month for the "This Month" stat card
-  // We compare both the month AND the year to avoid counting last year's same month
+  // We compare both month AND year to avoid counting last year's same month
   const thisMonthExpenses = expenses.filter((e) => {
     const d = new Date(e.date);
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
 
   // Derived summary statistics for the four stat cards
-  // .reduce() loops through the array and accumulates a total
+  // .reduce() loops through the array and accumulates a running total
   const thisMonth = thisMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
   const allTime = expenses.reduce((sum, e) => sum + e.amount, 0);
-  // Math.max with spread operator finds the single largest amount
+  // Math.max with spread operator finds the single largest amount in the array
   const largest = expenses.length > 0 ? Math.max(...expenses.map((e) => e.amount)) : 0;
 
   // Transform API monthly aggregation into Recharts-compatible { name, amount } shape
@@ -59,36 +59,35 @@ export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, 
   }));
 
   // Show only the 5 most recent expenses in the dashboard preview list
-  // The full list is in the All Expenses view
   const recent = expenses.slice(0, 5);
 
   return (
     <div className="dashboard">
 
-      {/* ── HERO BANNER ────────────────────────────────────────
-          Background image set in CSS (.page-hero).
-          The gradient overlay darkens the image so text is readable.
+      {/* HERO BANNER — background image set in CSS (.page-hero)
+          Gradient overlay darkens the image so text is readable.
           AURUM label sits above the title for a luxury brand feel. */}
       <div className="page-hero">
         <div className="page-hero-content">
-          <p className="hero-aurum-label">AURUM</p>       {/* subtle brand label */}
+          {/* Subtle brand label above the title */}
+          <p className="hero-aurum-label">AURUM</p>
           <h1 className="page-title">Overview</h1>
           <p className="page-sub">
-            {/* toLocaleString formats the date: "April 2026" */}
+            {/* toLocaleString formats the date as "April 2026" */}
             {now.toLocaleString('default', { month: 'long', year: 'numeric' })}
           </p>
         </div>
       </div>
 
-      {/* ── STAT CARDS GRID ─────────────────────────────────────
-          Four cards in a responsive grid.
+      {/* STAT CARDS GRID — four cards in a responsive grid.
           Each StatsCard receives a value and shows it formatted.
           While loading=true, each StatsCard shows a skeleton shimmer. */}
       <div className="stats-grid">
+        {/* HTML entity &#9678; renders as a circle icon */}
         <StatsCard
           label="This Month"
           value={thisMonth}
-          icon="&#9678;"   {/* HTML entity for a circle icon */}
+          icon="&#9678;"
           prefix="$"
           loading={loading}
         />
@@ -99,12 +98,13 @@ export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, 
           prefix="$"
           loading={loading}
         />
+        {/* isCount tells StatsCard to format as a whole number, not $0.00 */}
         <StatsCard
           label="Entries"
-          value={expenses.length}  {/* total number of expenses */}
+          value={expenses.length}
           icon="&#9673;"
           loading={loading}
-          isCount  {/* tells StatsCard to format as a whole number, not $0.00 */}
+          isCount
         />
         <StatsCard
           label="Largest"
@@ -115,8 +115,7 @@ export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, 
         />
       </div>
 
-      {/* ── CHARTS SECTION ──────────────────────────────────────
-          Two charts side by side on desktop, stacked on mobile.
+      {/* CHARTS SECTION — two charts side by side on desktop, stacked on mobile.
           TrendChart = area chart showing monthly spending over time
           CategoryChart = donut chart showing breakdown by category */}
       <div className="charts-section">
@@ -124,31 +123,32 @@ export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, 
           <div className="chart-header">
             <h2 className="chart-title">Monthly Trend</h2>
           </div>
-          {/* monthlyData is the transformed array for Recharts */}
+          {/* monthlyData is the transformed array Recharts expects */}
           <TrendChart data={monthlyData} loading={loading} />
         </div>
         <div className="chart-card">
           <div className="chart-header">
             <h2 className="chart-title">By Category</h2>
           </div>
-          {/* categoryStats comes directly from MongoDB aggregation */}
+          {/* categoryStats comes directly from the MongoDB aggregation pipeline */}
           <CategoryChart data={stats.categoryStats} loading={loading} />
         </div>
       </div>
 
-      {/* ── RECENT EXPENSES ─────────────────────────────────────
-          Shows the 5 most recent expenses.
-          "View all →" switches to the All Expenses tab. */}
+      {/* RECENT EXPENSES — shows 5 most recent, "View all" switches tab */}
       <div className="section-header">
         <h2 className="section-title">Recent Expenses</h2>
+        {/* &rarr; is the HTML entity for → */}
         <button className="view-all" onClick={onViewAll}>
-          View all &rarr;  {/* &rarr; = → arrow HTML entity */}
+          View all &rarr;
         </button>
       </div>
 
-      {/* Conditional rendering based on loading/data state */}
+      {/* Conditional rendering based on loading/data state:
+          1. loading → show skeleton placeholders
+          2. no data → show empty state message
+          3. has data → render expense cards */}
       {loading ? (
-        /* Show skeleton loaders while data is loading */
         <div className="skeleton-list">
           {[1, 2, 3].map((i) => (
             <div
@@ -159,17 +159,15 @@ export default function Dashboard({ expenses, stats, loading, onEdit, onDelete, 
           ))}
         </div>
       ) : recent.length === 0 ? (
-        /* Empty state — shown when there are no expenses yet */
         <div className="empty-state">
           <div className="empty-icon">&#9670;</div>
           <h3 className="empty-title">No expenses yet</h3>
           <p className="empty-sub">Add your first expense to get started</p>
         </div>
       ) : (
-        /* Render the 5 most recent expenses using ExpenseCard */
+        // key={expense._id} is required by React to track list items efficiently
         <div className="expense-list">
           {recent.map((expense) => (
-            // key={expense._id} is required by React to track list items efficiently
             <ExpenseCard
               key={expense._id}
               expense={expense}

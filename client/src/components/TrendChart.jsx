@@ -30,12 +30,12 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-// Custom tooltip component — replaces Recharts' default ugly tooltip
-// `active` = true when the user is hovering over a data point
-// `payload` = the data for the hovered point
-// `label` = the X-axis label (month name)
+// Custom tooltip component — replaces Recharts' default tooltip
+// active = true when the user is hovering over a data point
+// payload = the data for the hovered point
+// label = the X-axis label (month name)
 function CustomTooltip({ active, payload, label }) {
-  if (!active || !payload || !payload.length) return null; // don't render if not hovering
+  if (!active || !payload || !payload.length) return null;
   return (
     <div className="custom-tooltip">
       <p className="custom-tooltip-label">{label}</p>
@@ -68,12 +68,11 @@ export default function TrendChart({ data, loading }) {
 
   return (
     // ResponsiveContainer makes the chart fill 100% of its parent's width
-    // height={200} sets a fixed pixel height
     <ResponsiveContainer width="100%" height={200}>
       <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
 
-        {/* SVG gradient definition — white at top, transparent at bottom */}
-        {/* This creates the "glow" fill under the line */}
+        {/* SVG gradient — white at top fading to transparent at bottom
+            This creates the soft glow fill under the line */}
         <defs>
           <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="rgba(255,255,255,0.18)" stopOpacity={1} />
@@ -81,44 +80,53 @@ export default function TrendChart({ data, loading }) {
           </linearGradient>
         </defs>
 
-        {/* Faint horizontal grid lines — very subtle for the dark theme */}
+        {/* Faint horizontal grid lines — very subtle for the dark theme
+            strokeDasharray="3 3" makes dashed lines, vertical={false} hides vertical lines */}
         <CartesianGrid
-          strokeDasharray="3 3"          {/* dashed line pattern */}
+          strokeDasharray="3 3"
           stroke="rgba(255,255,255,0.04)"
-          vertical={false}               {/* only horizontal lines, no vertical */}
+          vertical={false}
         />
 
-        {/* X-axis — shows month names (Jan, Feb, etc.) */}
+        {/* X-axis — shows month names (Jan, Feb, etc.)
+            axisLine={false} hides the axis line, tickLine={false} hides tick marks */}
         <XAxis
-          dataKey="name"                 {/* use the 'name' property of each data point */}
+          dataKey="name"
           stroke="rgba(255,255,255,0.2)"
           tick={{ fill: 'rgba(255,255,255,0.28)', fontSize: 12, fontFamily: 'Inter, sans-serif' }}
-          axisLine={false}               {/* hide the axis line itself */}
-          tickLine={false}               {/* hide the tick marks */}
+          axisLine={false}
+          tickLine={false}
         />
 
-        {/* Y-axis — shows dollar amounts ($0, $90, $180, etc.) */}
+        {/* Y-axis — shows dollar amounts ($0, $90, $180, etc.)
+            tickFormatter converts raw numbers to "$300" format
+            width={64} gives enough room for the dollar labels */}
         <YAxis
           stroke="rgba(255,255,255,0.2)"
           tick={{ fill: 'rgba(255,255,255,0.28)', fontSize: 12, fontFamily: 'Inter, sans-serif' }}
-          tickFormatter={(v) => '$' + v.toLocaleString()} {/* format numbers as $300 */}
+          tickFormatter={(v) => '$' + v.toLocaleString()}
           axisLine={false}
           tickLine={false}
-          width={64}  {/* give Y-axis enough room for the dollar labels */}
+          width={64}
         />
 
         {/* Use our custom tooltip component on hover */}
         <Tooltip content={<CustomTooltip />} />
 
-        {/* The actual data line and fill area */}
+        {/* The actual data line and fill area
+            type="monotone" = smooth curve between points
+            dataKey="amount" = use the amount property for Y values
+            fill="url(#goldGrad)" = reference the gradient defined above
+            dot={false} = no dots on each data point (cleaner look)
+            activeDot = white dot that appears when hovering */}
         <Area
-          type="monotone"                        {/* smooth curve between points */}
-          dataKey="amount"                       {/* use the 'amount' property for Y values */}
-          stroke="rgba(255,255,255,0.7)"         {/* white line */}
+          type="monotone"
+          dataKey="amount"
+          stroke="rgba(255,255,255,0.7)"
           strokeWidth={1.5}
-          fill="url(#goldGrad)"                  {/* reference the gradient defined above */}
-          dot={false}                            {/* no dots on each data point */}
-          activeDot={{ r: 4, fill: '#FFFFFF', stroke: '#000000', strokeWidth: 2 }} {/* dot on hover */}
+          fill="url(#goldGrad)"
+          dot={false}
+          activeDot={{ r: 4, fill: '#FFFFFF', stroke: '#000000', strokeWidth: 2 }}
         />
       </AreaChart>
     </ResponsiveContainer>

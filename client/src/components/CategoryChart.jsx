@@ -37,17 +37,17 @@ function CustomTooltip({ active, payload }) {
   );
 }
 
-// CenterLabel — renders the total amount in the donut hole
+// CenterLabel — renders the total amount text in the donut hole
 // viewBox is provided by Recharts and contains cx/cy (centre coordinates)
-// total is passed via the content prop: <Label content={<CenterLabel total={x} />} />
+// total is passed via the content prop
 function CenterLabel({ viewBox, total }) {
-  const { cx, cy } = viewBox; // centre coordinates of the donut
+  const { cx, cy } = viewBox;
   return (
     <g>
-      {/* Total amount — e.g. "$955" */}
+      {/* Total amount displayed slightly above centre — e.g. "$955" */}
       <text
         x={cx}
-        y={cy - 6}            {/* slightly above centre */}
+        y={cy - 6}
         textAnchor="middle"
         dominantBaseline="middle"
         className="donut-center-text"
@@ -58,10 +58,10 @@ function CenterLabel({ viewBox, total }) {
       >
         ${Number(total).toLocaleString('en-US', { maximumFractionDigits: 0 })}
       </text>
-      {/* "total" label below the number */}
+      {/* "total" label rendered below the number */}
       <text
         x={cx}
-        y={cy + 14}           {/* below centre */}
+        y={cy + 14}
         textAnchor="middle"
         dominantBaseline="middle"
         className="donut-center-sub"
@@ -96,35 +96,35 @@ export default function CategoryChart({ data, loading }) {
     );
   }
 
-  // Calculate total across all categories (shown in donut centre)
+  // Calculate grand total across all categories (shown in donut centre)
   const total = data.reduce((sum, item) => sum + item.total, 0);
 
-  // Transform MongoDB aggregation format to Recharts format
-  // MongoDB: { _id: 'Food & Dining', total: 93.95 }
-  // Recharts: { name: 'Food & Dining', value: 93.95 }
+  // Transform MongoDB aggregation format into Recharts format
+  // MongoDB gives: { _id: 'Food & Dining', total: 93.95 }
+  // Recharts needs: { name: 'Food & Dining', value: 93.95 }
   const chartData = data.map((item) => ({
-    name: item._id,    // category name becomes the slice label
-    value: item.total, // total amount becomes the slice size
+    name: item._id,
+    value: item.total,
     count: item.count,
   }));
 
   return (
     <>
-      {/* ResponsiveContainer makes the chart fit its parent div */}
+      {/* ResponsiveContainer makes the chart fit its parent div width */}
       <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
             data={chartData}
-            cx="50%"           {/* centre horizontally */}
-            cy="50%"           {/* centre vertically */}
-            innerRadius={60}   {/* creates the donut hole — remove this for a full pie */}
-            outerRadius={90}   {/* outer edge of the donut ring */}
-            paddingAngle={3}   {/* small gap between slices */}
-            dataKey="value"    {/* use 'value' property to determine slice size */}
-            labelLine={false}  {/* no lines pointing to labels */}
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={90}
+            paddingAngle={3}
+            dataKey="value"
+            labelLine={false}
           >
-            {/* CenterLabel is rendered once in the donut hole */}
-            {/* This must be a CHILD of <Pie>, not a prop — see comment at top */}
+            {/* CenterLabel rendered once in the donut hole.
+                Must be a CHILD of Pie, not a prop — see comment at top of file */}
             <Label content={<CenterLabel total={total} />} position="center" />
 
             {/* Each Cell gives a slice its colour from CATEGORY_COLORS */}
@@ -132,7 +132,7 @@ export default function CategoryChart({ data, loading }) {
               <Cell
                 key={`cell-${index}`}
                 fill={CATEGORY_COLORS[entry.name] || DEFAULT_COLOR}
-                stroke="transparent"  {/* no border between slices */}
+                stroke="transparent"
               />
             ))}
           </Pie>
@@ -142,7 +142,7 @@ export default function CategoryChart({ data, loading }) {
         </PieChart>
       </ResponsiveContainer>
 
-      {/* Colour legend below the chart — shows each category and its total */}
+      {/* Colour legend below the chart — category name + total amount */}
       <div className="category-legend">
         {chartData.map((entry) => (
           <div className="legend-item" key={entry.name}>
